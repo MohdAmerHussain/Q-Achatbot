@@ -63,7 +63,7 @@ You can click these to quickly get answers without typing anything.
 
 ## Code Structure 🗂️
 
-- **`app.py`**: Main file containing the Streamlit UI and backend logic.
+- **`Q&Achatbot.py`**: Main file containing the Streamlit UI and backend logic.
 - **`styles.py`**: Contains custom CSS for styling the Streamlit app.
 - **`requirements.txt`**: Lists the necessary dependencies for the project.
 - **`README.md`**: This file, providing project information.
