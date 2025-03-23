@@ -94,7 +94,7 @@ def rag(db_fiass, Query, k=10, col_list=None):
 
     {output_retrieval_merged}
     
-    Your task is to answer the following question based on the provided context and Always try to corelate Question with given column names.. 
+    Your task is to answer the following question based on the provided context and Always try to correlate Question with given column names.. 
 
     Question: {Query}
 
