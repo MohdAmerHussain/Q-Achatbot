@@ -66,6 +66,7 @@ You can click these to quickly get answers without typing anything.
 - **`Q&Achatbot.py`**: Main file containing the Streamlit UI and backend logic.
 - **`styles.py`**: Contains custom CSS for styling the Streamlit app.
 - **`requirements.txt`**: Lists the necessary dependencies for the project.
+- **`Documentation & Code Walkthrough.docx`**: Provides you indetail explaination of Project.
 - **`README.md`**: This file, providing project information.
 
 ## Future Enhancements 🌱
