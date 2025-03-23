@@ -35,9 +35,7 @@ To run this project locally, you need to have Python 3.x installed, along with t
 ### Install Dependencies 📦
 
 You can install all dependencies using the `requirements.txt` file:
-
-```bash
-pip install -r requirements.txt
+- `pip install -r requirements.txt`
 
 ### API Key for Google Generative AI 🔑
 To interact with the Google Generative AI, you'll need to have a valid Google API Key. You can get the API key [here](https://ai.google.dev/gemini-api/docs/api-key).
@@ -49,22 +47,18 @@ Once you have the key, enter it in the Streamlit UI when prompted.
 ### 1. Run the Application 🚀:
 Start the app by running the following command:
 
-```bash
-streamlit run app.py
+- `streamlit run app.py'
 
 ### 2. Upload Your Excel File 📤:
 Go to the sidebar in the Streamlit UI and upload an Excel file.
-
 The file will be processed, and a FAISS index will be created.
 
 ### 3. Ask Questions 💬:
 After processing the Excel file, you can type your questions in the chat input field.
-
 The chatbot will search for relevant data from the file and use the Google Generative AI model to generate an answer.
 
 ### 4. Predefined FAQs 📚:
 The sidebar also has predefined questions (e.g., "Describe the data?", "How many columns are numerical?", "What is the size of data?").
-
 You can click these to quickly get answers without typing anything.
 
 ## Code Structure 🗂️
