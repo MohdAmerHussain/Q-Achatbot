@@ -1,12 +1,3 @@
-# import streamlit as st
-# import pandas as pd
-# from langchain.schema import Document
-# from langchain.text_splitter import RecursiveCharacterTextSplitter
-# from langchain.vectorstores.faiss import FAISS
-# from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-# import os
-# from styles import *
-
 """
 This script implements an Excel-based Q&A chatbot using Streamlit and Google Generative AI.
 
@@ -72,7 +63,7 @@ def prepare_excel(file_path, nrows=10000, skip_rows=0):
     documents = [Document(page_content=text) for text in chunk_data]
 
     # Split the documents into smaller chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=50)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
     chunked_data = text_splitter.split_documents(documents)
 
     # Generate embeddings for each chunk using the provided model
@@ -81,10 +72,10 @@ def prepare_excel(file_path, nrows=10000, skip_rows=0):
     # Create a FAISS index from the documents
     db_fiass = FAISS.from_documents(chunked_data, embedding=embeddings)
     
-    return db_fiass
+    return db_fiass, header_row
 
 # Function to perform retrieval-augmented generation (RAG)
-def rag(db_fiass, Query, k=10):
+def rag(db_fiass, Query, k=10, col_list=None):
     """
     Perform retrieval-augmented generation (RAG) by searching the FAISS index for the most relevant documents
     and using a generative model to generate an answer based on the retrieved context.
@@ -97,22 +88,23 @@ def rag(db_fiass, Query, k=10):
     
     # Enhanced prompt formulation for the generative model
     Prompt = f"""
+    Here are the column names present in context: {col_list} 
+
     You are a helpful assistant with access to the following context:
 
     {output_retrieval_merged}
-
-    Your task is to answer the following question based on the provided context. 
+    
+    Your task is to answer the following question based on the provided context and Always try to corelate Question with given column names.. 
 
     Question: {Query}
 
     Please provide your answer in a clear, concise, and structured format. If the information is available, break your answer into key points. 
     If the context does not contain enough information to answer the question, kindly respond by saying, "I don't have enough information to answer that."
 
-    Be direct and accurate with your response. If the question asks for a list, summary, or specific data, format your answer accordingly.
-    """
+    Be direct and accurate with your response. If the question asks for a list, summary, or specific data, format your answer accordingly."""
     
     # Instantiate the generative model
-    model = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", temperature=0)
+    model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
     
     # Generate the response using the model
     response_text = model.invoke(Prompt)
@@ -143,7 +135,9 @@ def chatbot_logic():
         st.session_state.db_fiass = None
     if 'messages' not in st.session_state:
         st.session_state.messages = []
-
+    if 'col_list' not in st.session_state:
+        st.session_state.col_list = []
+ 
     # Handle File Upload and Processing
     if uploaded_file:
         st.sidebar.success("File uploaded successfully!")
@@ -166,8 +160,10 @@ def chatbot_logic():
                 st.sidebar.error("Please enter a valid Google API key.")
 
             # Process the uploaded Excel file and create a FAISS index
-            db_fiass = prepare_excel(uploaded_file, nrows=nrows, skip_rows=start_rows)
+            db_fiass, col_list = prepare_excel(uploaded_file, nrows=nrows, skip_rows=start_rows)
+            # st.write(col_list)
             if db_fiass:
+                st.session_state.col_list = col_list
                 st.session_state.db_fiass = db_fiass
                 st.sidebar.success("Excel file processed successfully!")
             else:
@@ -189,7 +185,7 @@ def chatbot_logic():
     def process_chat_input(user_input):
         if user_input and st.session_state.db_fiass:
             # Generate the answer using RAG method
-            answer = rag(st.session_state.db_fiass, user_input)
+            answer = rag(st.session_state.db_fiass, user_input, col_list=st.session_state.col_list)
             
             # Append user input and assistant response to the chat history
             st.session_state.messages.append({"role": "user", "message": user_input})
