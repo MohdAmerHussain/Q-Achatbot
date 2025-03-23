@@ -104,7 +104,14 @@ def rag(db_fiass, Query, k=10, col_list=None):
     Be direct and accurate with your response. If the question asks for a list, summary, or specific data, format your answer accordingly."""
     
     # Instantiate the generative model
-    model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
+    model = ChatGoogleGenerativeAI(
+        model="gemini-1.5-flash", 
+        temperature=0.0,  # Makes the model's answers more focused and deterministic
+        max_tokens=1000,  # Limit the response length
+        top_p=0.1,  # Restrict the selection to top 10% most likely tokens
+        frequency_penalty=0.5,  # Reduce repetition in the answers
+        presence_penalty=0.5,  # Avoid repeating the same topics
+        )
     
     # Generate the response using the model
     response_text = model.invoke(Prompt)
